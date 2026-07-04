@@ -9,6 +9,17 @@ import Results from './pages/Results';
 
 type Phase = 'landing' | 'quiz' | 'review' | 'results';
 
+const GAME_STATE_KEY = 'quizzy-game-state';
+
+function loadGameState(): Record<string, unknown> | null {
+  try {
+    const data = localStorage.getItem(GAME_STATE_KEY);
+    return data ? JSON.parse(data) : null;
+  } catch {
+    return null;
+  }
+}
+
 function loadLeaderboard(): LeaderboardEntry[] {
   try {
     const data = localStorage.getItem('quizzy-leaderboard');
@@ -25,13 +36,15 @@ function saveLeaderboard(entries: LeaderboardEntry[]) {
 }
 
 export default function App() {
-  const [phase, setPhase] = useState<Phase>('landing');
-  const [playerName, setPlayerName] = useState('');
-  const [playerAge, setPlayerAge] = useState(0);
-  const [difficulty, setDifficulty] = useState<Difficulty>('easy');
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [answers, setAnswers] = useState<QuizAnswer[]>([]);
-  const [results, setResults] = useState<QuizResult[]>([]);
+  const savedGame = loadGameState();
+
+  const [phase, setPhase] = useState<Phase>((savedGame?.phase as Phase) ?? 'landing');
+  const [playerName, setPlayerName] = useState((savedGame?.playerName as string) ?? '');
+  const [playerAge, setPlayerAge] = useState((savedGame?.playerAge as number) ?? 0);
+  const [difficulty, setDifficulty] = useState<Difficulty>((savedGame?.difficulty as Difficulty) ?? 'easy');
+  const [questions, setQuestions] = useState<Question[]>((savedGame?.questions as Question[]) ?? []);
+  const [answers, setAnswers] = useState<QuizAnswer[]>((savedGame?.answers as QuizAnswer[]) ?? []);
+  const [results, setResults] = useState<QuizResult[]>((savedGame?.results as QuizResult[]) ?? []);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>(loadLeaderboard);
   const [darkMode, setDarkMode] = useState(() => {
     try {
@@ -47,6 +60,15 @@ export default function App() {
       localStorage.setItem('quizzy-dark-mode', String(darkMode));
     } catch {}
   }, [darkMode]);
+
+  useEffect(() => {
+    if (phase === 'landing') {
+      try { localStorage.removeItem(GAME_STATE_KEY); } catch {}
+      return;
+    }
+    const gameState = { phase, playerName, playerAge, difficulty, questions, answers, results };
+    try { localStorage.setItem(GAME_STATE_KEY, JSON.stringify(gameState)); } catch {}
+  }, [phase, playerName, playerAge, difficulty, questions, answers, results]);
 
   const toggleTheme = useCallback(() => {
     setDarkMode(prev => !prev);
@@ -152,7 +174,7 @@ export default function App() {
         />
       )}
 
-      {phase === 'landing' && <Landing onStart={handleStart} />}
+      {phase === 'landing' && <Landing onStart={handleStart} leaderboard={leaderboard} currentPlayerName={playerName} />}
     </>
   );
 }
