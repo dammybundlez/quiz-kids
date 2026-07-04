@@ -7,6 +7,26 @@ import { generateScienceQuestions } from './scienceQuestions';
 
 const QUESTIONS_PER_ROUND = 20;
 
+function shuffleArray<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function randomizeOptions(question: Question): Question {
+  const indices = question.options.map((_, i) => i);
+  const shuffledIndices = shuffleArray(indices);
+  const newCorrectAnswer = shuffledIndices.indexOf(question.correctAnswer);
+  return {
+    ...question,
+    options: shuffledIndices.map(i => question.options[i]),
+    correctAnswer: newCorrectAnswer,
+  };
+}
+
 export function generateQuizQuestions(
   age: number,
   difficulty: Difficulty
@@ -66,7 +86,7 @@ export function generateQuizQuestions(
     ...scienceQuestions,
   ].sort(() => Math.random() - 0.5);
 
-  return all.slice(0, QUESTIONS_PER_ROUND);
+  return all.slice(0, QUESTIONS_PER_ROUND).map(randomizeOptions);
 }
 
 export function getDifficultyForAge(age: number): Difficulty {

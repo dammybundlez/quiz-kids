@@ -21,4 +21,13 @@ export {
   ArrowRight,
   PartyPopper,
   Lightbulb,
+  Flag,
+  Clock,
+  SkipForward,
+  List,
+  Moon,
+  Sun,
+  Medal,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';

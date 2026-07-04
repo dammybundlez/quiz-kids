@@ -23,3 +23,17 @@ export interface QuizResult {
   selectedAnswer: number;
   isCorrect: boolean;
 }
+
+export interface QuizAnswer {
+  selectedAnswer: number | null;
+  flagged: boolean;
+}
+
+export interface LeaderboardEntry {
+  playerName: string;
+  score: number;
+  total: number;
+  pct: number;
+  difficulty: Difficulty;
+  date: string;
+}

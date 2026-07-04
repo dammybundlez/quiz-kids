@@ -1,13 +1,16 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Puzzle, Calculator, BookOpen, Globe, FlaskConical, CheckCircle, XCircle, Lightbulb } from './Icons';
+import { useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import { Puzzle, Calculator, BookOpen, Globe, FlaskConical, CheckCircle, XCircle, Lightbulb, Flag } from './Icons';
 import type { Question } from '../types';
+import { playCorrect, playWrong } from '../lib/sound';
 
 interface QuestionCardProps {
   question: Question;
   questionNumber: number;
   totalQuestions: number;
-  onAnswer: (selectedIndex: number) => void;
+  selectedAnswer: number | null;
+  flagged: boolean;
+  onSelect: (index: number) => void;
 }
 
 const categoryIcons: Record<string, React.ReactNode> = {
@@ -37,23 +40,21 @@ export default function QuestionCard({
   question,
   questionNumber,
   totalQuestions,
-  onAnswer,
+  selectedAnswer,
+  flagged,
+  onSelect,
 }: QuestionCardProps) {
-  const [selected, setSelected] = useState<number | null>(null);
-  const [showResult, setShowResult] = useState(false);
+  const showResult = selectedAnswer !== null;
+  const isCorrect = selectedAnswer === question.correctAnswer;
+  const prevSelected = useRef(selectedAnswer);
 
-  const handleSelect = (index: number) => {
-    if (selected !== null) return;
-    setSelected(index);
-    setShowResult(true);
-    setTimeout(() => {
-      onAnswer(index);
-      setSelected(null);
-      setShowResult(false);
-    }, 1200);
-  };
-
-  const isCorrect = selected === question.correctAnswer;
+  useEffect(() => {
+    if (selectedAnswer !== null && selectedAnswer !== prevSelected.current) {
+      if (isCorrect) playCorrect();
+      else playWrong();
+    }
+    prevSelected.current = selectedAnswer;
+  }, [selectedAnswer, isCorrect]);
 
   return (
     <motion.div
@@ -66,8 +67,15 @@ export default function QuestionCard({
     >
       <div className="bg-white/20 backdrop-blur-xl rounded-xl p-6 md:p-10 shadow-2xl border border-white/30">
         <div className="flex items-center justify-between mb-3">
-          <span className="bg-white/30 text-white px-3 py-1 rounded-full text-sm font-bold">
-            <span className="inline-flex items-center gap-1.5">{categoryIcons[question.category]} {categoryLabel[question.category]}</span>
+          <span className="flex items-center gap-2">
+            <span className="bg-white/30 text-white px-3 py-1 rounded-full text-sm font-bold inline-flex items-center gap-1.5">
+              {categoryIcons[question.category]} {categoryLabel[question.category]}
+            </span>
+            {flagged && (
+              <span className="bg-amber-500/80 text-white px-2 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1">
+                <Flag size={12} /> Flagged
+              </span>
+            )}
           </span>
           <span className="text-white/80 font-bold text-sm">
             {questionNumber} / {totalQuestions}
@@ -81,21 +89,20 @@ export default function QuestionCard({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {question.options.map((opt, i) => {
             let state = '';
-            let disabled = false;
             if (showResult) {
-              disabled = true;
               if (i === question.correctAnswer) state = 'ring-4 ring-green-400 bg-green-500/40 scale-105';
-              else if (i === selected && !isCorrect) state = 'ring-4 ring-red-400 bg-red-500/40';
+              else if (i === selectedAnswer && !isCorrect) state = 'ring-4 ring-red-400 bg-red-500/40';
               else state = 'opacity-50';
+            } else {
+              if (i === selectedAnswer) state = 'ring-4 ring-white/60 scale-105';
+              state += ' hover:scale-102 hover:shadow-lg';
             }
-            if (selected === null) state = 'hover:scale-102 hover:shadow-lg';
 
             return (
               <motion.button
                 key={i}
-                onClick={() => handleSelect(i)}
-                disabled={disabled}
-                whileTap={selected === null ? { scale: 0.97 } : {}}
+                onClick={() => onSelect(i)}
+                whileTap={{ scale: 0.97 }}
                 className={`p-3 rounded-lg ${optionColors[i]} text-white font-bold text-base transition-all duration-300 cursor-pointer border border-white/20 ${state}`}
               >
                 <span className="block text-xs opacity-70 mb-1">
@@ -107,37 +114,30 @@ export default function QuestionCard({
           })}
         </div>
 
-        <AnimatePresence>
-          {showResult && isCorrect && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.5 }}
-              className="mt-4 text-center"
-            >
+        {showResult && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="mt-4 text-center"
+          >
+            {isCorrect ? (
               <span className="inline-flex items-center gap-2 text-2xl font-bold text-green-200">
                 <CheckCircle size={28} className="text-green-300" /> Correct!
               </span>
-            </motion.div>
-          )}
-          {showResult && !isCorrect && selected !== null && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.5 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.5 }}
-              className="mt-4 text-center"
-            >
-              <span className="inline-flex items-center gap-2 text-2xl font-bold text-red-200">
-                <XCircle size={28} className="text-red-300" /> Oops!
-              </span>
-              {question.explanation && (
-                <p className="text-white/80 text-sm mt-2 font-semibold inline-flex items-center gap-1.5">
-                  <Lightbulb size={16} /> {question.explanation}
-                </p>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
+            ) : (
+              <>
+                <span className="inline-flex items-center gap-2 text-2xl font-bold text-red-200">
+                  <XCircle size={28} className="text-red-300" /> Oops!
+                </span>
+                {question.explanation && (
+                  <p className="text-white/80 text-sm mt-2 font-semibold inline-flex items-center gap-1.5">
+                    <Lightbulb size={16} /> {question.explanation}
+                  </p>
+                )}
+              </>
+            )}
+          </motion.div>
+        )}
       </div>
     </motion.div>
   );

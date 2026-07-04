@@ -1,16 +1,17 @@
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Puzzle, Calculator, BookOpen, Globe, FlaskConical, Award, RefreshCw, CheckCircle, XCircle, FileText, PartyPopper } from '../components/Icons';
-import type { QuizResult } from '../types';
+import { Puzzle, Calculator, BookOpen, Globe, FlaskConical, Award, RefreshCw, CheckCircle, XCircle, FileText, Lightbulb, Medal } from '../components/Icons';
+import type { QuizResult, LeaderboardEntry } from '../types';
 import Confetti from '../components/Confetti';
 
 interface ResultsProps {
   results: QuizResult[];
   playerName: string;
+  leaderboard: LeaderboardEntry[];
   onRestart: () => void;
 }
 
-export default function Results({ results, playerName, onRestart }: ResultsProps) {
+export default function Results({ results, playerName, leaderboard, onRestart }: ResultsProps) {
   const stats = useMemo(() => {
     const total = results.length;
     const correct = results.filter(r => r.isCorrect).length;
@@ -100,29 +101,69 @@ export default function Results({ results, playerName, onRestart }: ResultsProps
             </div>
           </div>
 
-          {stats.pct >= 70 && (
-            <div className="bg-white/15 rounded-lg p-3 mb-5">
-              <div className="inline-flex items-center gap-2 text-white font-bold mb-2">
-                <PartyPopper size={20} className="text-yellow-300" /> Awesome performance!
-              </div>
+          <div className="bg-white/20 rounded-xl p-3 mb-5">
+            <h3 className="font-bold text-white mb-2 inline-flex items-center gap-1.5">
+              <FileText size={18} /> Corrections & Review
+            </h3>
+            <div className="space-y-2 max-h-72 overflow-y-auto">
+              {results.map((r, i) => (
+                <div
+                  key={i}
+                  className={`rounded-lg p-2 text-left text-sm border-l-4 ${r.isCorrect ? 'bg-green-500/20 border-green-400' : 'bg-red-500/20 border-red-400'}`}
+                >
+                  <p className="text-white font-bold flex items-center gap-1.5">
+                    {r.isCorrect ? <CheckCircle size={14} className="text-green-300 shrink-0" /> : <XCircle size={14} className="text-red-300 shrink-0" />}
+                    {r.question.question}
+                  </p>
+                  <div className="mt-1 space-y-0.5">
+                    <p className={r.isCorrect ? 'text-green-200' : 'text-red-200'}>
+                      Your answer: {r.question.options[r.selectedAnswer]}
+                    </p>
+                    {!r.isCorrect && (
+                      <p className="text-green-200">
+                        Correct answer: {r.question.options[r.question.correctAnswer]}
+                      </p>
+                    )}
+                    {r.question.explanation && (
+                      <p className="text-white/70 text-xs inline-flex items-center gap-1 mt-1">
+                        <Lightbulb size={12} /> {r.question.explanation}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
-          )}
+          </div>
 
-          {stats.pct < 70 && (
+          {leaderboard.length > 0 && (
             <div className="bg-white/20 rounded-xl p-3 mb-5">
               <h3 className="font-bold text-white mb-2 inline-flex items-center gap-1.5">
-                <FileText size={18} /> Review wrong answers
+                <Medal size={18} className="text-yellow-300" /> Leaderboard
               </h3>
-              <div className="space-y-2 max-h-60 overflow-y-auto">
-                {results.filter(r => !r.isCorrect).map((r, i) => (
-                  <div key={i} className="bg-white/20 rounded-lg p-2 text-left text-sm">
-                    <p className="text-white font-bold">{r.question.question}</p>
-                    <p className="text-red-200 inline-flex items-center gap-1">
-                      <XCircle size={14} /> You picked: {r.question.options[r.selectedAnswer]}
-                    </p>
-                    <p className="text-green-200 inline-flex items-center gap-1">
-                      <CheckCircle size={14} /> Answer: {r.question.options[r.question.correctAnswer]}
-                    </p>
+              <div className="space-y-1 max-h-48 overflow-y-auto">
+                {leaderboard.map((entry, i) => (
+                  <div
+                    key={i}
+                    className={`flex items-center justify-between rounded-lg p-2 text-sm ${
+                      entry.playerName === playerName && entry.pct === stats.pct
+                        ? 'bg-amber-500/30 ring-1 ring-amber-300'
+                        : 'bg-white/10'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${
+                        i === 0 ? 'bg-yellow-400 text-yellow-900' :
+                        i === 1 ? 'bg-gray-300 text-gray-700' :
+                        i === 2 ? 'bg-amber-600 text-white' :
+                        'bg-white/20 text-white'
+                      }`}>
+                        {i + 1}
+                      </span>
+                      <span className="text-white font-semibold">{entry.playerName}</span>
+                    </span>
+                    <span className="text-white font-bold">
+                      {entry.pct}%
+                    </span>
                   </div>
                 ))}
               </div>
