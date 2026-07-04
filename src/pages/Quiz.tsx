@@ -102,16 +102,16 @@ export default function Quiz({ playerName, questions, answers, onAnswersChange, 
   const timerWarning = timeLeft <= 30;
 
   return (
-    <div className="min-h-screen bg-indigo-500 flex flex-col items-center justify-center p-4 relative transition-colors duration-300">
+    <div className="min-h-screen bg-indigo-500 dark:bg-gray-900 flex flex-col items-center justify-center p-4 relative transition-colors duration-300">
       <div className="absolute top-4 right-16 flex items-center gap-2 z-10">
-        <div className={`flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 border border-white/30 ${timerWarning ? 'bg-red-500/40 border-red-400' : ''}`}>
-          <Clock size={14} className="text-white" />
+        <div className={`flex items-center gap-2 bg-white/20 dark:bg-gray-800/60 backdrop-blur-sm rounded-full px-4 py-2 border border-white/30 dark:border-gray-700/50 ${timerWarning ? 'bg-red-500/40 border-red-400' : ''}`} aria-live="polite" aria-atomic="true">
+          <Clock size={14} className="text-white" aria-hidden="true" />
           <span className="text-white font-bold text-sm tabular-nums">{formatTime(timeLeft)}</span>
         </div>
       </div>
 
-      <div className="absolute top-4 left-4 flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 border border-white/30 z-10">
-        <User size={14} className="text-white" />
+      <div className="absolute top-4 left-4 flex items-center gap-2 bg-white/20 dark:bg-gray-800/60 backdrop-blur-sm rounded-full px-4 py-2 border border-white/30 dark:border-gray-700/50 z-10">
+        <User size={14} className="text-white" aria-hidden="true" />
         <span className="text-white font-bold text-sm">{playerName}</span>
       </div>
 
@@ -121,24 +121,24 @@ export default function Quiz({ playerName, questions, answers, onAnswersChange, 
         className="w-full max-w-2xl text-center mb-3"
       >
         <h1 className="text-2xl font-black text-white drop-shadow-lg inline-flex items-center gap-2">
-          <Brain size={24} className="text-yellow-300" /> QuizzyKids
+          <Brain size={24} className="text-yellow-300" aria-hidden="true" /> QuizzyKids
         </h1>
       </motion.div>
 
       <ProgressBar current={answeredCount} total={questions.length} />
 
       <div className="flex items-center justify-center gap-4 mb-4">
-        <span className="text-white/80 text-sm font-semibold inline-flex items-center gap-1">
-          <CheckCircle size={14} className="text-green-300" /> {answeredCount} answered
+        <span className="text-white/80 dark:text-gray-300 text-sm font-semibold inline-flex items-center gap-1">
+          <CheckCircle size={14} className="text-green-300" aria-hidden="true" /> {answeredCount} answered
         </span>
         {flaggedCount > 0 && (
-          <span className="text-white/80 text-sm font-semibold inline-flex items-center gap-1">
-            <Flag size={14} className="text-amber-300" /> {flaggedCount} flagged
+          <span className="text-white/80 dark:text-gray-300 text-sm font-semibold inline-flex items-center gap-1">
+            <Flag size={14} className="text-amber-300" aria-hidden="true" /> {flaggedCount} flagged
           </span>
         )}
         {unanswered > 0 && (
-          <span className="text-white/80 text-sm font-semibold inline-flex items-center gap-1">
-            <XCircle size={14} className="text-red-300" /> {unanswered} left
+          <span className="text-white/80 dark:text-gray-300 text-sm font-semibold inline-flex items-center gap-1">
+            <XCircle size={14} className="text-red-300" aria-hidden="true" /> {unanswered} left
           </span>
         )}
       </div>
@@ -162,7 +162,7 @@ export default function Quiz({ playerName, questions, answers, onAnswersChange, 
               <button
                 onClick={goPrev}
                 disabled={currentIndex === 0}
-                className="px-4 py-2 bg-white/20 text-white font-bold rounded-lg hover:bg-white/30 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer text-sm"
+                className="px-4 py-2 bg-white/20 dark:bg-gray-700/50 text-white font-bold rounded-lg hover:bg-white/30 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-all cursor-pointer text-sm"
               >
                 ← Prev
               </button>
@@ -171,10 +171,10 @@ export default function Quiz({ playerName, questions, answers, onAnswersChange, 
                 className={`px-4 py-2 rounded-lg font-bold transition-all cursor-pointer text-sm inline-flex items-center gap-1.5 ${
                   answers[currentIndex].flagged
                     ? 'bg-amber-500 text-white'
-                    : 'bg-white/20 text-white hover:bg-white/30'
+                    : 'bg-white/20 dark:bg-gray-700/50 text-white hover:bg-white/30 dark:hover:bg-gray-700'
                 }`}
               >
-                <Flag size={14} /> {answers[currentIndex].flagged ? 'Flagged' : 'Flag'}
+                <Flag size={14} aria-hidden="true" /> {answers[currentIndex].flagged ? 'Flagged' : 'Flag'}
               </button>
             </div>
             <div className="flex gap-2">
@@ -183,7 +183,7 @@ export default function Quiz({ playerName, questions, answers, onAnswersChange, 
                   onClick={goNext}
                   className="px-4 py-2 bg-amber-500 text-white font-bold rounded-lg hover:bg-amber-400 transition-all cursor-pointer text-sm inline-flex items-center gap-1.5"
                 >
-                  Next <SkipForward size={14} />
+                  Next <SkipForward size={14} aria-hidden="true" />
                 </button>
               ) : (
                 <button
@@ -191,10 +191,10 @@ export default function Quiz({ playerName, questions, answers, onAnswersChange, 
                   className={`px-4 py-2 rounded-lg font-bold transition-all cursor-pointer text-sm inline-flex items-center gap-1.5 ${
                     allAnswered
                       ? 'bg-green-500 text-white hover:bg-green-400'
-                      : 'bg-white/20 text-white hover:bg-white/30'
+                      : 'bg-white/20 dark:bg-gray-700/50 text-white hover:bg-white/30 dark:hover:bg-gray-700'
                   }`}
                 >
-                  <List size={14} /> Review & Submit
+                  <List size={14} aria-hidden="true" /> Review & Submit
                 </button>
               )}
             </div>
@@ -202,7 +202,7 @@ export default function Quiz({ playerName, questions, answers, onAnswersChange, 
         </div>
 
         <div className="hidden md:flex flex-col items-center gap-2">
-          <span className="text-white/70 text-xs font-semibold">Questions</span>
+          <span className="text-white/70 dark:text-gray-400 text-xs font-semibold">Questions</span>
           <div className="grid grid-cols-4 gap-1.5">
             {questions.map((_, i) => {
               const isCurrent = i === currentIndex;
@@ -214,26 +214,27 @@ export default function Quiz({ playerName, questions, answers, onAnswersChange, 
               if (isAnswered && isFlagged) dotClass += ' bg-green-500/70 border-green-300 text-white';
               else if (isAnswered) dotClass += ' bg-green-500/50 border-green-300/50 text-white';
               else if (isFlagged) dotClass += ' bg-amber-500/70 border-amber-300 text-white';
-              else dotClass += ' bg-white/20 border-white/30 text-white/70 hover:bg-white/30';
+              else dotClass += ' bg-white/20 dark:bg-gray-700/50 border-white/30 dark:border-gray-600 text-white/70 hover:bg-white/30 dark:hover:bg-gray-700';
 
               return (
                 <button
                   key={i}
                   onClick={() => goTo(i)}
                   className={dotClass}
+                  aria-label={`Go to question ${i + 1}${isAnswered ? ', answered' : ''}${isFlagged ? ', flagged' : ''}`}
                 >
                   {i + 1}
                 </button>
               );
             })}
           </div>
-          <span className="text-white/50 text-[10px] mt-1">
+          <span className="text-white/50 dark:text-gray-500 text-[10px] mt-1">
             {unanswered > 0 ? `${unanswered} unanswered` : 'All done!'}
           </span>
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 md:hidden bg-indigo-600/90 backdrop-blur-md border-t border-white/20 p-2">
+      <div className="fixed bottom-0 left-0 right-0 md:hidden bg-indigo-600/90 dark:bg-gray-800/90 backdrop-blur-md border-t border-white/20 dark:border-gray-700/50 p-2">
         <div className="flex items-center justify-center gap-1 max-w-md mx-auto">
           {questions.map((_, i) => {
             const isCurrent = i === currentIndex;
@@ -245,13 +246,14 @@ export default function Quiz({ playerName, questions, answers, onAnswersChange, 
             if (isAnswered && isFlagged) dotClass += ' bg-green-500/70 border-green-300 text-white';
             else if (isAnswered) dotClass += ' bg-green-500/50 border-green-300/50 text-white';
             else if (isFlagged) dotClass += ' bg-amber-500/70 border-amber-300 text-white';
-            else dotClass += ' bg-white/20 border-white/30 text-white/70';
+            else dotClass += ' bg-white/20 dark:bg-gray-700/50 border-white/30 dark:border-gray-600 text-white/70';
 
             return (
               <button
                 key={i}
                 onClick={() => goTo(i)}
                 className={dotClass}
+                aria-label={`Go to question ${i + 1}${isAnswered ? ', answered' : ''}${isFlagged ? ', flagged' : ''}`}
               >
                 {i + 1}
               </button>

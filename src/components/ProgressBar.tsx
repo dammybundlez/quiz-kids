@@ -10,7 +10,7 @@ export default function ProgressBar({ current, total }: ProgressBarProps) {
 
   return (
     <div className="w-full max-w-2xl mx-auto mb-4">
-      <div className="relative h-3 bg-white/20 rounded-full overflow-hidden backdrop-blur-sm">
+      <div className="relative h-3 bg-white/20 dark:bg-gray-700/50 rounded-full overflow-hidden backdrop-blur-sm">
         <motion.div
           className="absolute inset-y-0 left-0 bg-amber-400 rounded-full"
           initial={{ width: 0 }}

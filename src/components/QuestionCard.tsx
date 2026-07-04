@@ -14,11 +14,11 @@ interface QuestionCardProps {
 }
 
 const categoryIcons: Record<string, React.ReactNode> = {
-  riddle: <Puzzle size={18} />,
-  math: <Calculator size={18} />,
-  english: <BookOpen size={18} />,
-  general: <Globe size={18} />,
-  science: <FlaskConical size={18} />,
+  riddle: <Puzzle size={18} aria-hidden="true" />,
+  math: <Calculator size={18} aria-hidden="true" />,
+  english: <BookOpen size={18} aria-hidden="true" />,
+  general: <Globe size={18} aria-hidden="true" />,
+  science: <FlaskConical size={18} aria-hidden="true" />,
 };
 
 const categoryLabel: Record<string, string> = {
@@ -65,7 +65,7 @@ export default function QuestionCard({
       transition={{ type: 'spring', stiffness: 300, damping: 25 }}
       className="w-full max-w-3xl mx-auto px-4"
     >
-      <div className="bg-white/20 backdrop-blur-xl rounded-xl p-6 md:p-10 shadow-2xl border border-white/30">
+      <div className="bg-white/20 dark:bg-gray-800/60 backdrop-blur-xl rounded-xl p-6 md:p-10 shadow-2xl border border-white/30 dark:border-gray-700/50">
         <div className="flex items-center justify-between mb-3">
           <span className="flex items-center gap-2">
             <span className="bg-white/30 text-white px-3 py-1 rounded-full text-sm font-bold inline-flex items-center gap-1.5">
@@ -73,7 +73,7 @@ export default function QuestionCard({
             </span>
             {flagged && (
               <span className="bg-amber-500/80 text-white px-2 py-1 rounded-full text-xs font-bold inline-flex items-center gap-1">
-                <Flag size={12} /> Flagged
+                <Flag size={12} aria-hidden="true" /> Flagged
               </span>
             )}
           </span>
@@ -121,17 +121,17 @@ export default function QuestionCard({
             className="mt-4 text-center"
           >
             {isCorrect ? (
-              <span className="inline-flex items-center gap-2 text-2xl font-bold text-green-200">
-                <CheckCircle size={28} className="text-green-300" /> Correct!
+                <span className="inline-flex items-center gap-2 text-2xl font-bold text-green-200">
+                  <CheckCircle size={28} className="text-green-300" aria-hidden="true" /> Correct!
               </span>
             ) : (
               <>
                 <span className="inline-flex items-center gap-2 text-2xl font-bold text-red-200">
-                  <XCircle size={28} className="text-red-300" /> Oops!
+                  <XCircle size={28} className="text-red-300" aria-hidden="true" /> Oops!
                 </span>
                 {question.explanation && (
                   <p className="text-white/80 text-sm mt-2 font-semibold inline-flex items-center gap-1.5">
-                    <Lightbulb size={16} /> {question.explanation}
+                    <Lightbulb size={16} aria-hidden="true" /> {question.explanation}
                   </p>
                 )}
               </>

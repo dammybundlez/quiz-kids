@@ -36,11 +36,11 @@ export default function Results({ results, playerName, leaderboard, onRestart }:
   const message = getMessage();
 
   const categoryIcons: Record<string, React.ReactNode> = {
-    riddle: <Puzzle size={16} />,
-    math: <Calculator size={16} />,
-    english: <BookOpen size={16} />,
-    general: <Globe size={16} />,
-    science: <FlaskConical size={16} />,
+    riddle: <Puzzle size={16} aria-hidden="true" />,
+    math: <Calculator size={16} aria-hidden="true" />,
+    english: <BookOpen size={16} aria-hidden="true" />,
+    general: <Globe size={16} aria-hidden="true" />,
+    science: <FlaskConical size={16} aria-hidden="true" />,
   };
 
   const categoryLabels: Record<string, string> = {
@@ -52,7 +52,7 @@ export default function Results({ results, playerName, leaderboard, onRestart }:
   };
 
   return (
-    <div className="min-h-screen bg-indigo-500 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-indigo-500 dark:bg-gray-900 flex items-center justify-center p-4">
       <Confetti active={stats.pct >= 70} />
 
       <motion.div
@@ -61,7 +61,7 @@ export default function Results({ results, playerName, leaderboard, onRestart }:
         transition={{ type: 'spring', stiffness: 200, damping: 20 }}
         className="w-full max-w-lg"
       >
-        <div className="bg-white/20 backdrop-blur-xl rounded-xl p-6 md:p-10 shadow-2xl border border-white/30 text-center">
+        <div className="bg-white/20 dark:bg-gray-800/60 backdrop-blur-xl rounded-xl p-6 md:p-10 shadow-2xl border border-white/30 dark:border-gray-700/50 text-center">
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
@@ -78,9 +78,9 @@ export default function Results({ results, playerName, leaderboard, onRestart }:
             Great work, {playerName}!
           </p>
 
-          <div className="bg-white/20 rounded-xl p-4 mb-5">
+          <div className="bg-white/20 dark:bg-gray-800/40 rounded-xl p-4 mb-5">
             <div className="inline-flex items-center gap-3 text-6xl font-black text-white mb-1 drop-shadow">
-              <Award size={48} className="text-yellow-300" /> {stats.pct}%
+              <Award size={48} className="text-yellow-300" aria-hidden="true" /> {stats.pct}%
             </div>
             <p className="text-white/80 font-semibold">
               {stats.correct} / {stats.total} correct
@@ -88,7 +88,7 @@ export default function Results({ results, playerName, leaderboard, onRestart }:
 
             <div className="mt-4 grid grid-cols-3 gap-3">
               {Object.entries(stats.byCategory).map(([cat, s]) => (
-                  <div key={cat} className="bg-white/20 rounded-lg p-2">
+                    <div key={cat} className="bg-white/20 dark:bg-gray-800/40 rounded-lg p-2">
                     <div className="text-lg inline-flex items-center gap-1.5">{categoryIcons[cat]} {categoryLabels[cat] || cat}</div>
                     <div className="text-2xl font-black text-white">
                     {s.correct}/{s.total}
@@ -101,9 +101,9 @@ export default function Results({ results, playerName, leaderboard, onRestart }:
             </div>
           </div>
 
-          <div className="bg-white/20 rounded-xl p-3 mb-5">
+          <div className="bg-white/20 dark:bg-gray-800/40 rounded-xl p-3 mb-5">
             <h3 className="font-bold text-white mb-2 inline-flex items-center gap-1.5">
-              <FileText size={18} /> Corrections & Review
+              <FileText size={18} aria-hidden="true" /> Corrections & Review
             </h3>
             <div className="space-y-2 max-h-72 overflow-y-auto">
               {results.map((r, i) => (
@@ -112,7 +112,7 @@ export default function Results({ results, playerName, leaderboard, onRestart }:
                   className={`rounded-lg p-2 text-left text-sm border-l-4 ${r.isCorrect ? 'bg-green-500/20 border-green-400' : 'bg-red-500/20 border-red-400'}`}
                 >
                   <p className="text-white font-bold flex items-center gap-1.5">
-                    {r.isCorrect ? <CheckCircle size={14} className="text-green-300 shrink-0" /> : <XCircle size={14} className="text-red-300 shrink-0" />}
+                    {r.isCorrect ? <CheckCircle size={14} className="text-green-300 shrink-0" aria-hidden="true" /> : <XCircle size={14} className="text-red-300 shrink-0" aria-hidden="true" />}
                     {r.question.question}
                   </p>
                   <div className="mt-1 space-y-0.5">
@@ -126,7 +126,7 @@ export default function Results({ results, playerName, leaderboard, onRestart }:
                     )}
                     {r.question.explanation && (
                       <p className="text-white/70 text-xs inline-flex items-center gap-1 mt-1">
-                        <Lightbulb size={12} /> {r.question.explanation}
+                        <Lightbulb size={12} aria-hidden="true" /> {r.question.explanation}
                       </p>
                     )}
                   </div>
@@ -136,9 +136,9 @@ export default function Results({ results, playerName, leaderboard, onRestart }:
           </div>
 
           {leaderboard.length > 0 && (
-            <div className="bg-white/20 rounded-xl p-3 mb-5">
+            <div className="bg-white/20 dark:bg-gray-800/40 rounded-xl p-3 mb-5">
               <h3 className="font-bold text-white mb-2 inline-flex items-center gap-1.5">
-                <Medal size={18} className="text-yellow-300" /> Leaderboard
+                <Medal size={18} className="text-yellow-300" aria-hidden="true" /> Leaderboard
               </h3>
               <div className="space-y-1 max-h-48 overflow-y-auto">
                 {leaderboard.map((entry, i) => (
@@ -147,7 +147,7 @@ export default function Results({ results, playerName, leaderboard, onRestart }:
                     className={`flex items-center justify-between rounded-lg p-2 text-sm ${
                       entry.playerName === playerName && entry.pct === stats.pct
                         ? 'bg-amber-500/30 ring-1 ring-amber-300'
-                        : 'bg-white/10'
+                        : 'bg-white/10 dark:bg-gray-800/40'
                     }`}
                   >
                     <span className="flex items-center gap-2">
@@ -176,7 +176,7 @@ export default function Results({ results, playerName, leaderboard, onRestart }:
             whileTap={{ scale: 0.97 }}
             className="w-full py-3 bg-amber-500 text-white font-black text-lg rounded-lg shadow-lg hover:shadow-xl transition-all cursor-pointer tracking-wide inline-flex items-center justify-center gap-2"
           >
-            <RefreshCw size={24} /> Play Again!
+            <RefreshCw size={24} aria-hidden="true" /> Play Again!
           </motion.button>
         </div>
       </motion.div>

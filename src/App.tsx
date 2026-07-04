@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Moon, Sun } from 'lucide-react';
 import type { Difficulty, Question, QuizResult, QuizAnswer, LeaderboardEntry } from './types';
 import { generateQuizQuestions } from './data/questions';
@@ -19,7 +19,9 @@ function loadLeaderboard(): LeaderboardEntry[] {
 }
 
 function saveLeaderboard(entries: LeaderboardEntry[]) {
-  localStorage.setItem('quizzy-leaderboard', JSON.stringify(entries.slice(0, 20)));
+  try {
+    localStorage.setItem('quizzy-leaderboard', JSON.stringify(entries.slice(0, 20)));
+  } catch {}
 }
 
 export default function App() {
@@ -31,14 +33,23 @@ export default function App() {
   const [answers, setAnswers] = useState<QuizAnswer[]>([]);
   const [results, setResults] = useState<QuizResult[]>([]);
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>(loadLeaderboard);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    try {
+      const saved = localStorage.getItem('quizzy-dark-mode');
+      if (saved !== null) return saved === 'true';
+    } catch {}
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
+
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', darkMode);
+    try {
+      localStorage.setItem('quizzy-dark-mode', String(darkMode));
+    } catch {}
+  }, [darkMode]);
 
   const toggleTheme = useCallback(() => {
-    setDarkMode(prev => {
-      const next = !prev;
-      document.documentElement.classList.toggle('dark', next);
-      return next;
-    });
+    setDarkMode(prev => !prev);
   }, []);
 
   const handleStart = useCallback(
@@ -105,9 +116,9 @@ export default function App() {
       <button
         onClick={toggleTheme}
         className="fixed top-4 right-4 z-50 bg-white/20 backdrop-blur-sm rounded-full p-2 border border-white/30 hover:bg-white/30 transition-all cursor-pointer"
-        title={darkMode ? 'Light mode' : 'Dark mode'}
+        aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
       >
-        {darkMode ? <Sun size={18} className="text-white" /> : <Moon size={18} className="text-white" />}
+        {darkMode ? <Sun size={18} className="text-white" aria-hidden="true" /> : <Moon size={18} className="text-white" aria-hidden="true" />}
       </button>
 
       {phase === 'quiz' && (

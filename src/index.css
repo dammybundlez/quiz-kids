@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --font-inter: 'Inter', sans-serif;
   --color-primary: #6c5ce7;
@@ -23,9 +25,17 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.dark body,
-.dark #root {
-  background: #1a1a2e;
+*:focus-visible {
+  outline: 2px solid #fbbf24;
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 @keyframes float {

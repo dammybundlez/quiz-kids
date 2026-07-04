@@ -37,7 +37,7 @@ export default function Confetti({ active }: { active: boolean }) {
   }, [active]);
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden" aria-hidden="true">
       <AnimatePresence>
         {particles.map(p => (
           <motion.div
